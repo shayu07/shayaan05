@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>Shop - Shayaan's Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', sans-serif;
       padding: 20px;
       background-color: black;
-      color: white;
+      color: #f0f0f0;
     }
 
     nav a {
@@ -18,40 +19,44 @@
       color: white;
     }
 
-    nav {
+    .search-bar input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
       margin-bottom: 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
     }
 
     .product {
       border: 1px solid #555;
       padding: 10px;
-      text-align: center;
       border-radius: 10px;
       background-color: #111;
-      color: white;
-      box-shadow: 0 0 10px #222;
-      transition: transform 0.2s ease;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeIn 0.5s ease;
     }
 
     .product:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px #fff;
+      box-shadow: 0 0 15px white;
     }
 
     .product img {
       width: 100px;
       height: 100px;
       object-fit: contain;
-      margin-bottom: 10px;
     }
 
-    #cart-section {
+    #cart-section, #checkout-section {
       margin-top: 30px;
       border-top: 2px solid white;
       padding-top: 20px;
@@ -60,20 +65,6 @@
     #cart-items {
       list-style: none;
       padding: 0;
-      margin: 10px 0;
-      color: white;
-    }
-
-    .cart-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    #cart-total {
-      font-weight: bold;
-      font-size: 18px;
-      color: white;
     }
 
     button {
@@ -83,80 +74,219 @@
       color: white;
       cursor: pointer;
       border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+      margin-top: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background-color: #666;
+      background-color: #888;
+      transform: scale(1.05);
+    }
+
+    .remove-btn {
+      background-color: #900;
+      margin-left: 10px;
+    }
+
+    .remove-btn:hover {
+      background-color: #c00;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    #order-summary {
+      background-color: #222;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    #order-summary h3 {
+      margin-top: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; font-size: 16px; }
+      .product img { width: 80px; height: 80px; }
     }
   </style>
 </head>
 <body>
 
-  <nav><a href="index.html">← Back to Home</a></nav>
+<nav><a href="index.html">← Back to Home</a></nav>
+<h1>Welcome to the Shop</h1>
 
-  <h1>Welcome to the Shop</h1>
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search for products..." />
+</div>
 
-  <div class="product-grid" id="productGrid"></div>
+<div class="product-grid" id="productGrid"></div>
 
-  <div id="cart-section">
-    <div class="cart-title">🛒 Items in Cart:</div>
-    <ul id="cart-items"></ul>
-    <div id="cart-total">Total Price: ₹0</div>
-  </div>
+<div id="cart-section">
+  <h2>🛒 Cart (<span id="cart-count">0</span> items)</h2>
+  <ul id="cart-items"></ul>
+  <div id="cart-total">Total Price: ₹0</div>
+</div>
 
-  <script>
-    const products = [
-      { name: 'T-Shirt', price: 499, img: 'tshirt.jpeg' },
-      { name: 'Sticker', price: 199, img: 'sticker.jpeg' },
-      { name: 'Shoes', price: 799, img: 'shoes.jpeg' },
-      { name: 'Sunglasses', price: 299, img: 'glasses.jpeg' },
-      { name: 'Backpack', price: 999, img: 'bag.jpeg' },
-      { name: 'Watch', price: 699, img: 'watch.jpeg' },
-      { name: 'Cap', price: 149, img: 'cap.jpeg' },
-      { name: 'Notebook', price: 79, img: 'notebook.jpeg' },
-      { name: 'Headphones', price: 1299, img: 'headphones.jpeg' },
-      { name: 'Pen Pack', price: 59, img: 'pen.jpeg' },
-      { name: 'Mouse', price: 349, img: 'mouse.jpeg' },
-      { name: 'Keyboard', price: 499, img: 'keyboard.jpeg' },
-      { name: 'Bottle', price: 249, img: 'bottle.jpeg' },
-      { name: 'Mobile Cover', price: 199, img: 'cover.jpeg' },
-      { name: 'Power Bank', price: 1099, img: 'powerbank.jpeg' },
-      { name: 'Torch', price: 159, img: 'torch.jpeg' },
-      { name: 'Slippers', price: 399, img: 'slippers.jpeg' },
-      { name: 'Hair Oil', price: 99, img: 'hairoil.jpeg' },
-      { name: 'Toothpaste', price: 69, img: 'toothpaste.jpeg' },
-      { name: 'Face Wash', price: 179, img: 'facewash.jpeg' }
-    ];
+<div id="checkout-section">
+  <h2>📝 Shipping & Payment</h2>
+  <input type="text" id="name" placeholder="Full Name" required />
+  <textarea id="address" placeholder="Shipping Address" rows="3" required></textarea>
+  <input type="text" id="phone" placeholder="Phone Number" required />
+  <select id="payment-method">
+    <option value="cod">Cash on Delivery</option>
+    <option value="upi">UPI</option>
+    <option value="card">Credit/Debit Card</option>
+  </select>
+  <button onclick="placeOrder()">Place Order</button>
+</div>
 
-    let total = 0;
-    const productGrid = document.getElementById('productGrid');
-    const cartItems = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
+<div id="order-summary" class="hidden">
+  <h3>✅ Order Placed Successfully!</h3>
+  <p><strong>Name:</strong> <span id="sum-name"></span></p>
+  <p><strong>Address:</strong> <span id="sum-address"></span></p>
+  <p><strong>Phone:</strong> <span id="sum-phone"></span></p>
+  <p><strong>Payment Method:</strong> <span id="sum-payment"></span></p>
+  <p><strong>Total Paid:</strong> ₹<span id="sum-total"></span></p>
+</div>
 
-    products.forEach(product => {
+<script>
+  const products = [
+    { name: 'T-Shirt', price: 499, img: 'tshirt.jpeg' },
+    { name: 'Sticker', price: 199, img: 'sticker.jpeg' },
+    { name: 'Shoes', price: 799, img: 'shoes.jpeg' },
+    { name: 'Sunglasses', price: 299, img: 'glasses.jpeg' },
+    { name: 'Backpack', price: 999, img: 'bag.jpeg' },
+    { name: 'Watch', price: 699, img: 'watch.jpeg' },
+    { name: 'Cap', price: 149, img: 'cap.jpeg' },
+    { name: 'Notebook', price: 79, img: 'notebook.jpeg' },
+    { name: 'Headphones', price: 1299, img: 'headphones.jpeg' },
+    { name: 'Pen Pack', price: 59, img: 'pen.jpeg' },
+    { name: 'Mouse', price: 349, img: 'mouse.jpeg' },
+    { name: 'Keyboard', price: 499, img: 'keyboard.jpeg' },
+    { name: 'Bottle', price: 249, img: 'bottle.jpeg' },
+    { name: 'Mobile Cover', price: 199, img: 'cover.jpeg' },
+    { name: 'Power Bank', price: 1099, img: 'powerbank.jpeg' },
+    { name: 'Torch', price: 159, img: 'torch.jpeg' },
+    { name: 'Slippers', price: 399, img: 'slippers.jpeg' },
+    { name: 'Hair Oil', price: 99, img: 'hairoil.jpeg' },
+    { name: 'Toothpaste', price: 69, img: 'toothpaste.jpeg' },
+    { name: 'Face Wash', price: 179, img: 'facewash.jpeg' }
+  ];
+
+  let total = 0;
+  let cartCount = 0;
+
+  const productGrid = document.getElementById('productGrid');
+  const cartItems = document.getElementById('cart-items');
+  const cartTotal = document.getElementById('cart-total');
+  const cartCountDisplay = document.getElementById('cart-count');
+  const searchInput = document.getElementById('searchInput');
+
+  function displayProducts(filtered) {
+    productGrid.innerHTML = '';
+    filtered.forEach(p => {
       const div = document.createElement('div');
       div.className = 'product';
-
       div.innerHTML = `
-        <img src="${product.img}" alt="${product.name}">
-        <p><strong>${product.name}</strong></p>
-        <p>Price: ₹${product.price}</p>
-        <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+        <img src="${p.img}" alt="${p.name}">
+        <p><strong>${p.name}</strong></p>
+        <p>Price: ₹${p.price}</p>
+        <button onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
       `;
-
       productGrid.appendChild(div);
     });
+  }
 
-    function addToCart(name, price) {
-      total += price;
-      const li = document.createElement('li');
-      li.textContent = `${name} - ₹${price}`;
-      cartItems.appendChild(li);
-      cartTotal.textContent = 'Total Price: ₹' + total;
+  function addToCart(name, price) {
+    total += price;
+    cartCount++;
+    const li = document.createElement('li');
+    li.innerHTML = `${name} - ₹${price} <button class="remove-btn" onclick="removeFromCart(this, ${price})">Remove</button>`;
+    cartItems.appendChild(li);
+    updateCartDisplay();
+  }
+
+  function removeFromCart(btn, price) {
+    total -= price;
+    cartCount--;
+    btn.parentElement.remove();
+    updateCartDisplay();
+  }
+
+  function updateCartDisplay() {
+    cartTotal.textContent = 'Total Price: ₹' + total;
+    cartCountDisplay.textContent = cartCount;
+  }
+
+  searchInput.addEventListener('input', () => {
+    const keyword = searchInput.value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+    displayProducts(filtered);
+  });
+
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem("cartHTML", cartItems.innerHTML);
+    localStorage.setItem("cartTotal", total);
+    localStorage.setItem("cartCount", cartCount);
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    cartItems.innerHTML = localStorage.getItem("cartHTML") || "";
+    total = parseInt(localStorage.getItem("cartTotal")) || 0;
+    cartCount = parseInt(localStorage.getItem("cartCount")) || 0;
+    updateCartDisplay();
+    displayProducts(products); // Show all products on initial load
+  });
+
+  function placeOrder() {
+    const name = document.getElementById('name').value;
+    const address = document.getElementById('address').value;
+    const phone = document.getElementById('phone').value;
+    const payment = document.getElementById('payment-method').value;
+
+    if (!name || !address || !phone || cartCount === 0) {
+      alert('Please fill all fields and add items to cart.');
+      return;
     }
-  </script>
+
+    document.getElementById('sum-name').textContent = name;
+    document.getElementById('sum-address').textContent = address;
+    document.getElementById('sum-phone').textContent = phone;
+    document.getElementById('sum-payment').textContent = payment.toUpperCase();
+    document.getElementById('sum-total').textContent = total;
+
+    document.getElementById('order-summary').classList.remove('hidden');
+
+    setTimeout(() => {
+      cartItems.innerHTML = '';
+      total = 0;
+      cartCount = 0;
+      updateCartDisplay();
+      document.getElementById('name').value = '';
+      document.getElementById('address').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('payment-method').value = 'cod';
+      localStorage.clear();
+    }, 2000);
+  }
+</script>
 
 </body>
 </html>
